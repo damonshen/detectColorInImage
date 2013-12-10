@@ -1,0 +1,1 @@
+/home/damon/Course/human-computer_interaction/detectColorInImage/CMakeFiles/detectColorInImage.dir

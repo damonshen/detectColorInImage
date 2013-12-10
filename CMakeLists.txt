@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 2.8)
+project( detectColorInImage )
+find_package( OpenCV REQUIRED )
+add_executable( detectColorInImage detectColorInImage.cpp )
+target_link_libraries( detectColorInImage ${OpenCV_LIBS} )
