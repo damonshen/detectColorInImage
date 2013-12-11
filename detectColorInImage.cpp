@@ -2,7 +2,7 @@
 #include <opencv2/opencv.hpp>
 #include "opencv2/highgui/highgui.hpp"
 #include <stdlib.h>
-#define squareWidth 48.5
+#define squareWidth 49
 using namespace cv;
 using namespace std;
 
@@ -83,6 +83,7 @@ void horizontalCrop(int x, int y, IplImage* src ){
 		i++;
 		printf("i=%s",str);
 	}
+	memset(str, 0, sizeof(str));
 }
 
 int main( int argc, char** argv )
@@ -134,7 +135,7 @@ int main( int argc, char** argv )
 
 	//crop the subimage
 	int originalX = 15;
-	int originalY = 15;
+	int originalY = 11;
 
 	horizontalCrop(originalX, originalY, frame);
 	printf("height: %d,width: %d\n",frame->height,frame->width);
