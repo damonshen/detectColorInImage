@@ -13,6 +13,8 @@ opencv2/opencv.hpp
 -
 opencv2/highgui/highgui.hpp
 /home/damon/Course/human-computer_interaction/detectColorInImage/opencv2/highgui/highgui.hpp
+stdlib.h
+-
 
 /usr/local/include/opencv2/calib3d/calib3d.hpp
 opencv2/core/core.hpp

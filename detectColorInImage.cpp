@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <opencv2/opencv.hpp>
 #include "opencv2/highgui/highgui.hpp"
-
+#include <stdlib.h>
+#define squareWidth 48.5
 using namespace cv;
 using namespace std;
+
 
 IplImage* GetThresholdedImage(IplImage* img,int low_h,int low_s,int low_v,int high_h,int high_s,int high_v)
 {
@@ -58,15 +60,29 @@ void objecttrack(IplImage* imgthresh,IplImage* frame,int h,int s,int v)
 IplImage* crop( IplImage* src,  CvRect roi){
 	// Must have dimensions of output image
 	IplImage* cropped = cvCreateImage( cvSize(roi.width,roi.height), src->depth, src->nChannels );
-
 	// Say what the source region is
 	cvSetImageROI( src, roi );
-
 	// Do the copy
 	cvCopy( src, cropped );
 	cvResetImageROI( src );
 
 	return cropped;
+}
+
+void horizontalCrop(int x, int y, IplImage* src ){
+	int i=0;
+	char str[20];
+	//if the location of start node smaller than the width of the image
+	while(x < src->width-50){
+		IplImage* cropImage = crop(src, cvRect(x, y, squareWidth, squareWidth));
+		//convert int i to char* str
+		snprintf(str, 20, "%d",i);
+		namedWindow( str, CV_WINDOW_AUTOSIZE );
+		cvShowImage( str, cropImage);
+		x+=squareWidth;
+		i++;
+		printf("i=%s",str);
+	}
 }
 
 int main( int argc, char** argv )
@@ -83,32 +99,32 @@ int main( int argc, char** argv )
 		return -1;
 	}
 #if 0 
-	   IplImage* imgRedThresh = GetThresholdedImage(frame,0,240,140,3,255,255);
-	   IplImage* imgOrangeThresh = GetThresholdedImage(frame,20,255,245,27,255,255);
-	   IplImage* imgYellowThresh = GetThresholdedImage(frame,26,229,239,40,255,255);
-	   IplImage* imgGreenThresh = GetThresholdedImage(frame,50,100,100,75,255,255);
-	   IplImage* imgLightBlueThresh = GetThresholdedImage(frame,79,250,234,100,255,247);
-	   IplImage* imgBlueThresh = GetThresholdedImage(frame,101,180,140,105,255,255);
-	   IplImage* imgNavyBlueThresh = GetThresholdedImage(frame,105,175,84,122,255,109);
-	   IplImage* imgPurpleThresh = GetThresholdedImage(frame,120,155,150,147,255,180);
+	IplImage* imgRedThresh = GetThresholdedImage(frame,0,240,140,3,255,255);
+	IplImage* imgOrangeThresh = GetThresholdedImage(frame,20,255,245,27,255,255);
+	IplImage* imgYellowThresh = GetThresholdedImage(frame,26,229,239,40,255,255);
+	IplImage* imgGreenThresh = GetThresholdedImage(frame,50,100,100,75,255,255);
+	IplImage* imgLightBlueThresh = GetThresholdedImage(frame,79,250,234,100,255,247);
+	IplImage* imgBlueThresh = GetThresholdedImage(frame,101,180,140,105,255,255);
+	IplImage* imgNavyBlueThresh = GetThresholdedImage(frame,105,175,84,122,255,109);
+	IplImage* imgPurpleThresh = GetThresholdedImage(frame,120,155,150,147,255,180);
 
 
-	   namedWindow( "red", CV_WINDOW_AUTOSIZE );
-	   cvShowImage( "red", imgRedThresh );
-	   namedWindow( "orange", CV_WINDOW_AUTOSIZE );
-	   cvShowImage( "orange", imgOrangeThresh );
-	   namedWindow( "yellow", CV_WINDOW_AUTOSIZE );
-	   cvShowImage( "yellow", imgYellowThresh );
-	   namedWindow( "green", CV_WINDOW_AUTOSIZE );
-	   cvShowImage( "green", imgGreenThresh );
-	   namedWindow( "light blue", CV_WINDOW_AUTOSIZE );
-	   cvShowImage( "light blue", imgLightBlueThresh );
-	   namedWindow( "blue", CV_WINDOW_AUTOSIZE );
-	   cvShowImage( "blue", imgBlueThresh );
-	   namedWindow( "navy blue", CV_WINDOW_AUTOSIZE );
-	   cvShowImage( "navy blue", imgNavyBlueThresh );
-	   namedWindow( "purple", CV_WINDOW_AUTOSIZE );
-	   cvShowImage( "purple", imgPurpleThresh );
+	namedWindow( "red", CV_WINDOW_AUTOSIZE );
+	cvShowImage( "red", imgRedThresh );
+	namedWindow( "orange", CV_WINDOW_AUTOSIZE );
+	cvShowImage( "orange", imgOrangeThresh );
+	namedWindow( "yellow", CV_WINDOW_AUTOSIZE );
+	cvShowImage( "yellow", imgYellowThresh );
+	namedWindow( "green", CV_WINDOW_AUTOSIZE );
+	cvShowImage( "green", imgGreenThresh );
+	namedWindow( "light blue", CV_WINDOW_AUTOSIZE );
+	cvShowImage( "light blue", imgLightBlueThresh );
+	namedWindow( "blue", CV_WINDOW_AUTOSIZE );
+	cvShowImage( "blue", imgBlueThresh );
+	namedWindow( "navy blue", CV_WINDOW_AUTOSIZE );
+	cvShowImage( "navy blue", imgNavyBlueThresh );
+	namedWindow( "purple", CV_WINDOW_AUTOSIZE );
+	cvShowImage( "purple", imgPurpleThresh );
 #endif
 
 	//	objecttrack(imgGreenThresh,frame,100,255,0);
@@ -117,11 +133,11 @@ int main( int argc, char** argv )
 
 
 	//crop the subimage
-	IplImage* cropped = crop(frame, cvRect( 20,20, 50,50 ));
+	int originalX = 15;
+	int originalY = 15;
 
-	namedWindow( "crop", CV_WINDOW_AUTOSIZE );
-	cvShowImage( "crop", cropped);
-
+	horizontalCrop(originalX, originalY, frame);
+	printf("height: %d,width: %d\n",frame->height,frame->width);
 
 	waitKey(0);
 
