@@ -71,17 +71,18 @@ IplImage* crop( IplImage* src,  CvRect roi){
 
 void horizontalCrop(int x, int y, IplImage* src ){
 	int i=0;
-	char str[20];
+	char str[20]={};
 	//if the location of start node smaller than the width of the image
 	while(x < src->width-50){
 		IplImage* cropImage = crop(src, cvRect(x, y, squareWidth, squareWidth));
 		//convert int i to char* str
-		snprintf(str, 20, "%d",i);
+		sprintf(str, "%d",i);
+		//show the cropImage in the new window
 		namedWindow( str, CV_WINDOW_AUTOSIZE );
 		cvShowImage( str, cropImage);
 		x+=squareWidth;
 		i++;
-		printf("i=%s",str);
+//		printf("i=%s",str);
 	}
 	memset(str, 0, sizeof(str));
 }
