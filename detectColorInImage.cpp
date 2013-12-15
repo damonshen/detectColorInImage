@@ -70,6 +70,7 @@ IplImage* crop( IplImage* src,  CvRect roi){
 	return cropped;
 }
 
+//divide the horizontal row
 void horizontalCrop(int x, int y, IplImage* src ){
 	int i=0;
 	char str[20]={};
@@ -83,20 +84,24 @@ void horizontalCrop(int x, int y, IplImage* src ){
 		cvShowImage( str, cropImage);
 		x+=rectangleWidth;
 		i++;
-		//imageArr[size] = cropImage;
-		
-//		printf("i=%s",str);
 	}
 	memset(str, 0, sizeof(str));
 }
 
+//divide the image into pieces
 void divideImage(IplImage* srcImage){
+	//the position of original point
 	int originalX = 15;
 	int originalY = 13;
-	
+
+	int line = 0;	
+	//while the image still exist pieces
 	do{
+		//divide the row that beginning from the original point
 		horizontalCrop(originalX, originalY, srcImage);
+		//add the y coordinate to the next row
 		originalY += rectangleHeight;
+		printf("%d",line++);
 	}while(originalY+rectangleHeight < srcImage->height);
 }
 
