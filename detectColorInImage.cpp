@@ -93,8 +93,11 @@ void horizontalCrop(int x, int y, IplImage* src ){
 void divideImage(IplImage* srcImage){
 	int originalX = 15;
 	int originalY = 13;
-
-	horizontalCrop(originalX, originalY, srcImage);
+	
+	do{
+		horizontalCrop(originalX, originalY, srcImage);
+		originalY += rectangleHeight;
+	}while(originalY+rectangleHeight < srcImage->height);
 }
 
 int main( int argc, char** argv )
