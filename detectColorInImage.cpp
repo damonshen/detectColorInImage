@@ -2,7 +2,8 @@
 #include <opencv2/opencv.hpp>
 #include "opencv2/highgui/highgui.hpp"
 #include <stdlib.h>
-#define squareWidth 49
+#define rectangleHeight 45
+#define rectangleWidth 48
 using namespace cv;
 using namespace std;
 
@@ -74,17 +75,26 @@ void horizontalCrop(int x, int y, IplImage* src ){
 	char str[20]={};
 	//if the location of start node smaller than the width of the image
 	while(x < src->width-50){
-		IplImage* cropImage = crop(src, cvRect(x, y, squareWidth, squareWidth));
+		IplImage* cropImage = crop(src, cvRect(x, y, rectangleWidth, rectangleHeight));
 		//convert int i to char* str
 		sprintf(str, "%d",i);
 		//show the cropImage in the new window
 		namedWindow( str, CV_WINDOW_AUTOSIZE );
 		cvShowImage( str, cropImage);
-		x+=squareWidth;
+		x+=rectangleWidth;
 		i++;
+		//imageArr[size] = cropImage;
+		
 //		printf("i=%s",str);
 	}
 	memset(str, 0, sizeof(str));
+}
+
+void divideImage(IplImage* srcImage){
+	int originalX = 15;
+	int originalY = 13;
+
+	horizontalCrop(originalX, originalY, srcImage);
 }
 
 int main( int argc, char** argv )
@@ -134,13 +144,9 @@ int main( int argc, char** argv )
 	cvShowImage( "Original", frame );
 
 
+	divideImage(frame);
 	//crop the subimage
-	int originalX = 15;
-	int originalY = 11;
-
-	horizontalCrop(originalX, originalY, frame);
 	printf("height: %d,width: %d\n",frame->height,frame->width);
-
 	waitKey(0);
 
 	return 0;
