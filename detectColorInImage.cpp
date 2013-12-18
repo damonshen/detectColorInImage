@@ -7,6 +7,7 @@
 using namespace cv;
 using namespace std;
 
+vector <IplImage*> subimg;
 
 IplImage* GetThresholdedImage(IplImage* img,int low_h,int low_s,int low_v,int high_h,int high_s,int high_v)
 {
@@ -80,8 +81,12 @@ void horizontalCrop(int x, int y, IplImage* src ){
 		//convert int i to char* str
 		sprintf(str, "%d",i);
 		//show the cropImage in the new window
-		namedWindow( str, CV_WINDOW_AUTOSIZE );
-		cvShowImage( str, cropImage);
+		//namedWindow( str, CV_WINDOW_AUTOSIZE );
+		//cvShowImage( str, cropImage);
+		subimg.push_back(cropImage);
+		
+		//cvReleaseImage(&cropImage);
+		
 		x+=rectangleWidth;
 		i++;
 	}
@@ -105,19 +110,68 @@ void divideImage(IplImage* srcImage){
 	}while(originalY+rectangleHeight < srcImage->height);
 }
 
+void recognizeColor(){
+	IplImage* hsvimg=cvCreateImage(cvSize(50,50),8,3);
+	IplImage* rimg=cvCreateImage(cvSize(50,50),8,3);
+	IplImage* thresh=cvCreateImage(cvSize(50,50),8,1);
+	int threadnum[8][6]={
+		{0,240,140,3,255,255},
+		{20,255,245,27,255,255},
+		{26,229,239,40,255,255},
+		{63,145,101,86,255,182},
+		{79,250,234,100,255,247},
+		{101,180,140,105,255,255},
+		{105,175,84,122,255,109},
+		{120,155,150,147,255,180}
+	};
+	int finalscale[176] = {0};
+	int count, count2;
+	for(int j = 0; j < 8; j++) {
+		count2 = 0;
+		for(int i = 0; i < subimg.size(); i++) {
+			count = 0;
+			cvResize(subimg[i],rimg,CV_INTER_LINEAR);
+			cvCvtColor(rimg,hsvimg,CV_BGR2HSV);
+			cvInRangeS(hsvimg,cvScalar(threadnum[j][0],threadnum[j][1],threadnum[j][2]),cvScalar(threadnum[j][3],threadnum[j][4],threadnum[j][5]),thresh);
+			for(int y=0;y<thresh->height;y++)
+			{
+				for(int x=0;x<thresh->width;x++)
+				{
+					int B = ((uchar *)(thresh->imageData + y*thresh->widthStep))[x*thresh->nChannels + 0];	// get B
+					if(B==255){
+						count++;
+					}
+				}
+			}
+			if(count > (thresh->height * thresh->width * 0.2)){
+				finalscale[count2] = j+1;
+			}
+			count2++;
+		}
+	}
+	int count3 = 0;
+	printf("\nresult : \n");
+	printf("0:white 1:DO 2:RE 3:ME 4:FA 5:SO 6:LA 7:SI 8:DO \n");
+	for(int i=0;i<11;i++){
+		for(int j=0;j<16;j++){
+			printf("%d ", finalscale[count3]);
+			count3++;
+		}
+		printf("\n");
+	}
+	//Cleanup
+}
+
+
+
 int main( int argc, char** argv )
 {
 	/*
 	   Mat image;
 	   image = imread( argv[1], 1 );
 	 */
-	IplImage* frame = cvLoadImage(argv[1],1);
+	IplImage* frame = cvLoadImage("image.jpg",1);
 
-	if( argc != 2 )
-	{
-		printf( "No image data \n" );
-		return -1;
-	}
 #if 0 
 	IplImage* imgRedThresh = GetThresholdedImage(frame,0,240,140,3,255,255);
 	IplImage* imgOrangeThresh = GetThresholdedImage(frame,20,255,245,27,255,255);
@@ -151,8 +205,8 @@ int main( int argc, char** argv )
 	namedWindow( "Original", CV_WINDOW_AUTOSIZE );
 	cvShowImage( "Original", frame );
 
-
 	divideImage(frame);
+	recognizeColor();
 	//crop the subimage
 	printf("height: %d,width: %d\n",frame->height,frame->width);
 	waitKey(0);
